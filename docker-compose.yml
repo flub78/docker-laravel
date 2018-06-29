@@ -1,0 +1,43 @@
+version: '2'
+
+services:
+   mysql:
+     image: mysql:5.7
+     volumes:
+       - "/data/docker/laravel:/var/lib/mysql"
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: db_pw_1000
+
+   myadmin:
+     depends_on:
+       - mysql
+     image: phpmyadmin/phpmyadmin
+     links:
+       - "mysql:db"
+     ports:
+       - "9999:80"
+     restart: always
+
+   web:
+#     image: lara
+     image: hitalos/laravel
+     ports:
+       - "9998:80"
+     volumes:
+       - "./blog:/var/www"
+     links:
+       - "mysql:db"
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: db_pw_1000
+
+   jenkins:
+     image: flub78/jenkins:latest
+     volumes:
+       - /data/docker/jenkins_webapp:/var/jenkins_home
+     ports:
+       - "444:8443"
+       - "5000:50000"
+     restart: always
+
